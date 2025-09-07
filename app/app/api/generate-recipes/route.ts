@@ -22,9 +22,9 @@ export async function POST(request: NextRequest) {
     }
 
     const isGerman = language === 'de';
-    
-    const prompt = isGerman 
-      ? `Generiere genau 4-5 einzigartige und kreative Rezepte mit diesen 3 Hauptzutaten: ${filteredIngredients.join(', ')}. 
+
+    const prompt = isGerman
+      ? `Generiere genau 4-5 einzigartige und kreative Rezepte mit diesen 3 Hauptzutaten: ${filteredIngredients.join(', ')}.
 
 Berücksichtige dabei folgende Kriterien:
 - Rezepte sollen entzündungsarm und jodbewusst sein (Hashimoto-freundlich).
@@ -41,6 +41,7 @@ Für jedes Rezept stelle folgendes bereit:
 - Schritt-für-Schritt Kochanweisungen (detailliert und klar)
 - Geschätzte Kochzeit (z.B., "30 Minuten", "1 Stunde 15 Minuten")
 - Schwierigkeitsgrad (Einfach, Mittel, oder Schwer)
+- Eine kurze Beschreibung der "healthBenefits" (auf Englisch, 3-6 Begriffe, komma-getrennt), die die wichtigsten Gesundheitsvorteile zusammenfasst (z. B. stressreduzierend, fruchtbarkeitsfördernd, anti-entzündlich, anti-aging, darmfreundlich)
 
 Bitte antworte im JSON-Format mit der folgenden Struktur:
 {
@@ -50,13 +51,14 @@ Bitte antworte im JSON-Format mit der folgenden Struktur:
       "ingredients": ["Zutat 1", "Zutat 2", "..."],
       "instructions": ["Schritt 1", "Schritt 2", "..."],
       "cookingTime": "Zeitschätzung",
-      "difficulty": "Einfach/Mittel/Schwer"
+      "difficulty": "Einfach/Mittel/Schwer",
+      "healthBenefits": "stress-reducing, fertility-supporting, anti-inflammatory"
     }
   ]
 }
 
 Stelle sicher, dass jedes Rezept einzigartig, praktisch und köstlich ist. Die Rezepte sollten vielfältig in Kochmethoden und Geschmäckern sein. Antworte nur mit reinem JSON. Füge keine Codeblöcke, Markdown oder andere Formatierung hinzu.`
-      : `Generate exactly 4-5 unique and creative recipes using these 3 main ingredients: ${filteredIngredients.join(', ')}. 
+      : `Generate exactly 4-5 unique and creative recipes using these 3 main ingredients: ${filteredIngredients.join(', ')}.
 
 Consider the following criteria:
 - Recipes should be anti-inflammatory and iodine-conscious (Hashimoto-friendly).
@@ -73,6 +75,7 @@ For each recipe, provide:
 - Step-by-step cooking instructions (be detailed and clear)
 - Estimated cooking time (e.g., "30 minutes", "1 hour 15 minutes")
 - Difficulty level (Easy, Medium, or Hard)
+- A brief "healthBenefits" description (in English, 3-6 terms, comma-separated) summarizing key benefits such as stress-reducing, fertility-supporting, anti-inflammatory, anti-aging, gut-friendly
 
 Please respond in JSON format with the following structure:
 {
@@ -82,7 +85,8 @@ Please respond in JSON format with the following structure:
       "ingredients": ["ingredient 1", "ingredient 2", "..."],
       "instructions": ["step 1", "step 2", "..."],
       "cookingTime": "time estimate",
-      "difficulty": "Easy/Medium/Hard"
+      "difficulty": "Easy/Medium/Hard",
+      "healthBenefits": "stress-reducing, fertility-supporting, anti-inflammatory"
     }
   ]
 }
@@ -148,6 +152,14 @@ Make sure each recipe is unique, practical, and delicious. The recipes should be
                       instructions: recipe.instructions || [],
                       cookingTime: recipe.cookingTime || 'Time varies',
                       difficulty: recipe.difficulty || 'Easy',
+                      healthBenefits: (
+                        recipe.healthBenefits ||
+                        recipe.health_benefits ||
+                        recipe['health-benefits'] ||
+                        recipe.benefits ||
+                        recipe.gesundheitsvorteile ||
+                        undefined
+                      ),
                       userIngredients: filteredIngredients,
                       createdAt: new Date()
                     })) || [];

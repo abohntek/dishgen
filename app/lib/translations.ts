@@ -35,7 +35,8 @@ export const translations = {
     untitledRecipe: 'Untitled Recipe',
     noIngredients: 'No ingredients listed',
     noInstructions: 'No instructions provided',
-    
+    healthBenefits: 'Health Benefits',
+
     // Difficulty levels
     easy: 'Easy',
     medium: 'Medium',
@@ -97,7 +98,8 @@ export const translations = {
     untitledRecipe: 'Unbenanntes Rezept',
     noIngredients: 'Keine Zutaten aufgelistet',
     noInstructions: 'Keine Anweisungen bereitgestellt',
-    
+    healthBenefits: 'Gesundheitsvorteile',
+
     // Difficulty levels
     easy: 'Einfach',
     medium: 'Mittel',

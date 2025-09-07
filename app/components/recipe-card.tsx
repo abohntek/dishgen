@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -28,7 +27,7 @@ export function RecipeCard({ recipe, showSaveButton = true, isSaved = false }: R
 
 ${t('difficulty')}: ${recipe.difficulty}
 ${t('cookingTime')}: ${recipe.cookingTime}
-
+${recipe.healthBenefits ? `\n${t('healthBenefits')}: ${recipe.healthBenefits}\n` : ''}
 ${t('ingredients')}:
 ${recipe.ingredients?.map(ing => `• ${ing}`).join('\n') || ''}
 
@@ -49,7 +48,7 @@ ${recipe.instructions?.map((inst, i) => `${i + 1}. ${inst}`).join('\n') || ''}`;
         const recipeToSave = {
           ...recipe,
           id: recipe.id || `recipe-${Date.now()}-${Math.random()}`,
-          createdAt: recipe.createdAt || new Date()
+          createdAt: recipe.createdAt || new Date(),
         };
         saveRecipe(recipeToSave);
         setSaved(true);
@@ -81,7 +80,7 @@ ${recipe.instructions?.map((inst, i) => `${i + 1}. ${inst}`).join('\n') || ''}`;
             {recipe.title || t('untitledRecipe')}
           </CardTitle>
           <div className="flex gap-2">
-            <Badge className={cn("text-xs font-medium", getDifficultyColor(recipe.difficulty || t('easy')))}>
+            <Badge className={cn('text-xs font-medium', getDifficultyColor(recipe.difficulty || t('easy')))}>
               {recipe.difficulty || t('easy')}
             </Badge>
           </div>
@@ -90,8 +89,14 @@ ${recipe.instructions?.map((inst, i) => `${i + 1}. ${inst}`).join('\n') || ''}`;
           <Clock className="h-4 w-4" />
           {recipe.cookingTime || t('timeVaries')}
         </CardDescription>
+        {recipe.healthBenefits && (
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="font-semibold">{t('healthBenefits')}: </span>
+            <span>{recipe.healthBenefits}</span>
+          </div>
+        )}
       </CardHeader>
-      
+
       <CardContent className="flex-1 space-y-4">
         <div>
           <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-1">
@@ -99,12 +104,14 @@ ${recipe.instructions?.map((inst, i) => `${i + 1}. ${inst}`).join('\n') || ''}`;
             {t('ingredients')}
           </h4>
           <ul className="space-y-1 text-sm text-gray-700">
-            {recipe.ingredients?.length ? recipe.ingredients.map((ingredient, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <span className="text-orange-500 font-bold">•</span>
-                <span>{ingredient}</span>
-              </li>
-            )) : (
+            {recipe.ingredients?.length ? (
+              recipe.ingredients.map((ingredient, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="text-orange-500 font-bold">•</span>
+                  <span>{ingredient}</span>
+                </li>
+              ))
+            ) : (
               <li className="text-gray-500 italic">{t('noIngredients')}</li>
             )}
           </ul>
@@ -113,42 +120,34 @@ ${recipe.instructions?.map((inst, i) => `${i + 1}. ${inst}`).join('\n') || ''}`;
         <div>
           <h4 className="font-semibold text-gray-900 mb-2">{t('instructions')}</h4>
           <ol className="space-y-2 text-sm text-gray-700">
-            {recipe.instructions?.length ? recipe.instructions.map((instruction, index) => (
-              <li key={index} className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                  {index + 1}
-                </span>
-                <span className="flex-1">{instruction}</span>
-              </li>
-            )) : (
+            {recipe.instructions?.length ? (
+              recipe.instructions.map((instruction, index) => (
+                <li key={index} className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    {index + 1}
+                  </span>
+                  <span className="flex-1">{instruction}</span>
+                </li>
+              ))
+            ) : (
               <li className="text-gray-500 italic">{t('noInstructions')}</li>
             )}
           </ol>
         </div>
 
         <div className="flex gap-2 pt-4 border-t border-orange-100">
-          <Button
-            onClick={handleCopy}
-            variant="outline"
-            size="sm"
-            className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50"
-          >
+          <Button onClick={handleCopy} variant="outline" size="sm" className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50">
             <Copy className="h-4 w-4 mr-2" />
             {t('copy')}
           </Button>
-          
+
           {showSaveButton && (
             <Button
               onClick={handleSave}
-              variant={saved ? "secondary" : "default"}
+              variant={saved ? 'secondary' : 'default'}
               size="sm"
               disabled={saved}
-              className={cn(
-                "flex-1",
-                saved 
-                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                  : "bg-orange-500 hover:bg-orange-600 text-white"
-              )}
+              className={cn('flex-1', saved ? 'bg-green-100 text-green-800 hover:bg-green-100' : 'bg-orange-500 hover:bg-orange-600 text-white')}
             >
               {saved ? (
                 <>

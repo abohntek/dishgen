@@ -18,7 +18,18 @@ export const saveRecipe = (recipe: Recipe): void => {
 export const getSavedRecipes = (): Recipe[] => {
   try {
     const savedRecipes = localStorage.getItem(STORAGE_KEY);
-    return savedRecipes ? JSON.parse(savedRecipes) : [];
+    const parsed = savedRecipes ? JSON.parse(savedRecipes) : [];
+    if (!Array.isArray(parsed)) return [];
+
+    // Normalize legacy entries: ensure createdAt is Date and healthBenefits exists
+    return parsed.map((item: any) => {
+      const createdAt = item?.createdAt ? new Date(item.createdAt) : new Date();
+      const withHealthBenefits = {
+        ...item,
+        healthBenefits: 'healthBenefits' in item ? item.healthBenefits : '',
+      };
+      return { ...withHealthBenefits, createdAt } as Recipe;
+    });
   } catch (error) {
     console.error('Failed to load saved recipes:', error);
     return [];
